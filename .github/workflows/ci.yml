@@ -87,6 +87,25 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
 
+      # Rapport Trivy au format JSON (meme si le scan bloquant echoue)
+      - name: Generate Trivy report (JSON)
+        if: always()
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE_NAME }}
+          format: 'json'
+          output: 'trivy-report.json'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      # Sauvegarder le rapport Trivy
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.json
+
       # Publier l'image (uniquement sur push vers main)
       - name: Push Docker image
         if: github.event_name == 'push'
