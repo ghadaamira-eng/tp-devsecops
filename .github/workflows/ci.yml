@@ -78,6 +78,15 @@ jobs:
           docker stop democyber-test
           docker rm democyber-test
 
+      # Trivy scan : analyse des vulnerabilites de l'image avant publication
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE_NAME }}
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
       # Publier l'image (uniquement sur push vers main)
       - name: Push Docker image
         if: github.event_name == 'push'
