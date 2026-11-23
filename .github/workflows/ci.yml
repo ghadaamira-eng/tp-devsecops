@@ -54,6 +54,17 @@ jobs:
       # Construire le projet Maven
       - name: Build Java project with Maven
         run: mvn clean package
+      
+            - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.java.binaries=target/classes
 
       # Connexion a Docker Hub avec le token
       - name: Login to Docker Hub
