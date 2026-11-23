@@ -66,12 +66,17 @@ jobs:
       - name: Build Docker image
         run: docker build -t $DOCKER_IMAGE_NAME .
 
+      # Afficher nom, tag et taille de l'image
+      - name: Show Docker image details
+        run: docker images $DOCKER_IMAGE_NAME
+
       # Tester l'image avant de la publier
       - name: Test Docker image locally
         run: |
           docker run -d --name democyber-test -p 8080:8080 $DOCKER_IMAGE_NAME
           curl -f --retry 15 --retry-all-errors --retry-delay 3 http://localhost:8080
           docker stop democyber-test
+          docker rm democyber-test
 
       # Publier l'image (uniquement sur push vers main)
       - name: Push Docker image
